@@ -5,7 +5,7 @@ RUN	apk --no-cache add \
     git \
     make
     
-ENV AMASS_VERSION 2.9.1
+ENV AMASS_VERSION 2.9.2
 
 RUN mkdir -p /go/src/amass \
 	&& go get -u github.com/OWASP/Amass/... \
