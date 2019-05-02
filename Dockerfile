@@ -21,8 +21,8 @@ FROM alpine:edge
 RUN	apk upgrade && apk --no-cache add \
 	ca-certificates \
     && rm -rf /var/cache \
-    && addgroup -g 1000 amass \
-    && adduser -u 1000 -G amass -s /bin/sh -D amass
+    && addgroup amass \
+    && adduser -G amass -s /bin/sh -D amass
 
 COPY --from=builder /usr/local/bin/amass /usr/bin/amass
 COPY --from=builder /usr/local/bin/amass.db /usr/bin/amass.db
