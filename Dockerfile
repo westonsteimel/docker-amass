@@ -14,22 +14,20 @@ RUN mkdir -p /go/src/amass \
 	&& cd /go/src/amass \
     && go install ./... \
 	&& cp -vr /go/bin/* /usr/local/bin/ \
-	&& echo "Build complete."
-
-FROM alpine:edge
-
-RUN	apk upgrade && apk --no-cache add \
-	ca-certificates \
-    && rm -rf /var/cache \
+	&& echo "Build complete." \
     && addgroup amass \
     && adduser -G amass -s /bin/sh -D amass
+
+FROM alpine:edge
 
 COPY --from=builder /usr/local/bin/amass /usr/bin/amass
 COPY --from=builder /usr/local/bin/amass.db /usr/bin/amass.db
 COPY --from=builder /usr/local/bin/amass.netdomains /usr/bin/amass.netdomains
 COPY --from=builder /usr/local/bin/amass.viz /usr/bin/amass.viz
 COPY --from=builder /go/src/github.com/OWASP/Amass/wordlists /home/amass/.amass/wordlists
+COPY --from=builder /etc/passwd /etc/passwd
+COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 
 USER amass
 
-ENTRYPOINT [ "amass" ]
+ENTRYPOINT [ "/usr/bin/amass" ]
