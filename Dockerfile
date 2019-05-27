@@ -6,7 +6,7 @@ RUN	apk upgrade && apk --no-cache add \
     make \
     && rm -rf /var/cache
     
-ENV AMASS_VERSION 2.9.12
+ENV AMASS_VERSION 2.9.13
 
 RUN mkdir -p /go/src/amass \
 	&& go get -u github.com/OWASP/Amass/... \
