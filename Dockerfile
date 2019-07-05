@@ -6,7 +6,8 @@ RUN	apk upgrade && apk --no-cache add \
     make \
     && rm -rf /var/cache
     
-ENV AMASS_VERSION 2.9.13
+LABEL version="3.0.17"
+ENV AMASS_VERSION 3.0.17
 
 RUN mkdir -p /go/src/amass \
 	&& go get -u github.com/OWASP/Amass/... \
@@ -21,9 +22,6 @@ RUN mkdir -p /go/src/amass \
 FROM alpine:edge
 
 COPY --from=builder /usr/local/bin/amass /usr/bin/amass
-COPY --from=builder /usr/local/bin/amass.db /usr/bin/amass.db
-COPY --from=builder /usr/local/bin/amass.netdomains /usr/bin/amass.netdomains
-COPY --from=builder /usr/local/bin/amass.viz /usr/bin/amass.viz
 COPY --from=builder /go/src/github.com/OWASP/Amass/wordlists /home/amass/.amass/wordlists
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
