@@ -10,9 +10,11 @@ RUN	apk upgrade && apk --no-cache add \
     
 ARG AMASS_VERSION
 ENV AMASS_VERSION "${AMASS_VERSION}"
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GO111MODULE=on
 
 RUN mkdir -p /go/src/amass \
-	&& go get -u github.com/OWASP/Amass/... \
     && git clone --depth 1 --branch "${AMASS_VERSION}" https://github.com/OWASP/Amass.git /go/src/amass \
 	&& cd /go/src/amass \
     && go install ./... \
@@ -26,7 +28,7 @@ FROM alpine:edge
 ARG AMASS_VERSION
 
 COPY --from=builder /usr/local/bin/amass /usr/bin/amass
-COPY --from=builder /go/src/github.com/OWASP/Amass/wordlists /home/amass/.amass/wordlists
+COPY --from=builder /go/src/amass/wordlists /home/amass/.amass/wordlists
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 
