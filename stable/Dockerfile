@@ -40,4 +40,5 @@ LABEL org.opencontainers.image.title="amass" \
     org.opencontainers.image.description="amass in Docker" \ 
     org.opencontainers.image.url="https://github.com/westonsteimel/docker-amass" \ 
     org.opencontainers.image.source="https://github.com/westonsteimel/docker-amass" \
-    org.opencontainers.image.version="${AMASS_VERSION}"
+    org.opencontainers.image.version="${AMASS_VERSION}" \
+    version="${AMASS_VERSION}"
