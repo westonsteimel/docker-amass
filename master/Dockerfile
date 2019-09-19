@@ -28,7 +28,6 @@ FROM alpine:edge
 ARG AMASS_VERSION
 
 COPY --from=builder /usr/local/bin/amass /usr/bin/amass
-COPY --from=builder /go/src/amass/wordlists /home/amass/.amass/wordlists
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 
