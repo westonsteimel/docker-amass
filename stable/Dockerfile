@@ -1,4 +1,4 @@
-ARG AMASS_VERSION="v3.2.0"
+ARG AMASS_VERSION="v3.2.1"
 
 FROM golang:alpine AS builder
 
