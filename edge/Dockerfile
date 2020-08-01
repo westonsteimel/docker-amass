@@ -8,26 +8,25 @@ FROM golang:alpine AS builder
 ARG GIT_REF
 ARG VERSION
 ENV VERSION="${VERSION}"
+ENV CGO_ENABLED=0
+ENV GOOS=linux
+ENV GO111MODULE=on
 
 RUN	apk upgrade && apk --no-cache add \
 	ca-certificates \
     git \
     make \
     && rm -rf /var/cache
-    
-ARG AMASS_VERSION
-ENV AMASS_VERSION "${AMASS_VERSION}"
-ENV CGO_ENABLED=0
-ENV GOOS=linux
-ENV GO111MODULE=on
 
 RUN mkdir -p /go/src/amass \
     && git clone --depth 1 --branch "${GIT_REF}" https://github.com/OWASP/Amass.git /go/src/amass \
 	&& cd /go/src/amass \
-    && go install ./... \
+    && go install -ldflags '-s -w' ./... \
 	&& cp -vr /go/bin/* /usr/local/bin/ \
-	&& echo "Build complete." \
-    && addgroup amass \
+	&& if [$TARGETPLATFORM = "linux/amd64"]; then apk add --no-cache upx && upx --lzma --best /usr/local/bin/amass; fi \
+    && echo "Build complete."
+
+RUN addgroup amass \
     && adduser -G amass -s /bin/sh -D amass
 
 FROM scratch
