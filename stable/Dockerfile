@@ -1,6 +1,13 @@
-ARG AMASS_VERSION="v3.7.2"
+ARG REVISION
+ARG CREATED
+ARG VERSION
+ARG GIT_REF="${VERSION}"
 
 FROM golang:alpine AS builder
+
+ARG GIT_REF
+ARG VERSION
+ENV VERSION="${VERSION}"
 
 RUN	apk upgrade && apk --no-cache add \
 	ca-certificates \
@@ -15,7 +22,7 @@ ENV GOOS=linux
 ENV GO111MODULE=on
 
 RUN mkdir -p /go/src/amass \
-    && git clone --depth 1 --branch "${AMASS_VERSION}" https://github.com/OWASP/Amass.git /go/src/amass \
+    && git clone --depth 1 --branch "${GIT_REF}" https://github.com/OWASP/Amass.git /go/src/amass \
 	&& cd /go/src/amass \
     && go install ./... \
 	&& cp -vr /go/bin/* /usr/local/bin/ \
@@ -23,9 +30,12 @@ RUN mkdir -p /go/src/amass \
     && addgroup amass \
     && adduser -G amass -s /bin/sh -D amass
 
-FROM alpine:edge
+FROM scratch
 
-ARG AMASS_VERSION
+ARG VERSION
+ARG SOURCE
+ARG REVISION
+ARG CREATED
 
 COPY --from=builder /usr/local/bin/amass /usr/bin/amass
 COPY --from=builder /etc/passwd /etc/passwd
@@ -37,7 +47,7 @@ ENTRYPOINT [ "/usr/bin/amass" ]
 
 LABEL org.opencontainers.image.title="amass" \
     org.opencontainers.image.description="amass in Docker" \ 
-    org.opencontainers.image.url="https://github.com/westonsteimel/docker-amass" \ 
-    org.opencontainers.image.source="https://github.com/westonsteimel/docker-amass" \
-    org.opencontainers.image.version="${AMASS_VERSION}" \
-    version="${AMASS_VERSION}"
+    org.opencontainers.image.source="${SOURCE}" \
+    org.opencontainers.image.revision="${REVISION}" \
+    org.opencontainers.image.created="${CREATED}" \
+    org.opencontainers.image.version="${VERSION}"
